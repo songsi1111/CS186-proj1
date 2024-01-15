@@ -19,55 +19,81 @@ DROP VIEW IF EXISTS q4v;
 -- Question 0
 CREATE VIEW q0(era)
 AS
-  SELECT 1 -- replace this line
+  SELECT MAX(era)
+ FROM pitching
 ;
 
 -- Question 1i
 CREATE VIEW q1i(namefirst, namelast, birthyear)
 AS
-  SELECT 1, 1, 1 -- replace this line
+  SELECT namefirst, namelast, birthyear
+ FROM people
+ WHERE weight>300
 ;
 
 -- Question 1ii
 CREATE VIEW q1ii(namefirst, namelast, birthyear)
 AS
-  SELECT 1, 1, 1 -- replace this line
+  SELECT namefirst, namelast, birthyear
+ FROM people
+ WHERE namefirst LIKE '% %'
+ ORDER BY namefirst ASC,namelast ASC
 ;
 
 -- Question 1iii
 CREATE VIEW q1iii(birthyear, avgheight, count)
 AS
-  SELECT 1, 1, 1 -- replace this line
+  SELECT birthyear, avg(height), count(*)
+ FROM people
+ GROUP BY birthyear
+ ORDER BY birthyear
 ;
 
 -- Question 1iv
 CREATE VIEW q1iv(birthyear, avgheight, count)
 AS
-  SELECT 1, 1, 1 -- replace this line
+  SELECT birthyear, avg(height), count(*)
+ FROM people
+ GROUP BY birthyear
+ HAVING avg(height)>70
+ ORDER BY birthyear ASC
 ;
 
 -- Question 2i
 CREATE VIEW q2i(namefirst, namelast, playerid, yearid)
 AS
-  SELECT 1, 1, 1, 1 -- replace this line
+  SELECT DISTINCT namefirst, namelast, people.playerid, yearid
+ FROM people,halloffame
+ WHERE people.playerid=halloffame.playerid AND halloffame.inducted LIKE 'Y'
+ ORDER BY yearid DESC, people.playerid ASC
 ;
 
 -- Question 2ii
 CREATE VIEW q2ii(namefirst, namelast, playerid, schoolid, yearid)
 AS
-  SELECT 1, 1, 1, 1, 1 -- replace this line
+  SELECT namefirst, namelast, q2i.playerid, s.schoolid, yearid
+ FROM q2i, collegeplaying C, schools S
+ WHERE q2i.playerid=c.playerid AND s.schoolID=c.schoolID AND schoolstate LIKE 'CA'
+ ORDER BY yearid DESC, s.schoolid, q2i.playerid
 ;
 
 -- Question 2iii
 CREATE VIEW q2iii(playerid, namefirst, namelast, schoolid)
 AS
-  SELECT 1, 1, 1, 1 -- replace this line
+  SELECT q2i.playerid, namefirst, namelast, schoolid
+ FROM q2i LEFT OUTER JOIN collegeplaying C ON q2i.playerid=c.playerid
+ ORDER BY q2i.playerid DESC, schoolid ASC
 ;
 
 -- Question 3i
 CREATE VIEW q3i(playerid, namefirst, namelast, yearid, slg)
 AS
-  SELECT 1, 1, 1, 1, 1 -- replace this line
+  SELECT people.playerid, namefirst, namelast, yearid, ROUND((CAST(h AS FLOAT) + 1.0 * CAST(h2b AS FLOAT) + 2.0 * CAST(h3b AS FLOAT) + 3.0 * CAST(hr AS FLOAT)) / CAST(ab AS FLOAT),4) AS slgm
+  FROM people
+  INNER JOIN batting ON people.playerid = batting.playerid
+  WHERE AB > 50
+  ORDER BY slgm DESC, yearid, people.playerid AND people.playerid LIKE 'bondwa01'
+  LIMIT 10
 ;
 
 -- Question 3ii

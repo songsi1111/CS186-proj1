@@ -1,0 +1,2 @@
+playerid|namefirst|namelast|salary|yearid
+1|1|1|1|1
