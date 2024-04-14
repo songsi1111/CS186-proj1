@@ -234,15 +234,27 @@ Note: Some birth years have no players; your answer can simply skip those years.
 
 **ii.** Following the results from Part i, find the `playerid`, `namefirst`, `namelast` and `lslg` \(Lifetime Slugging Percentage\) for the players with the top 10 Lifetime Slugging Percentage. Lifetime Slugging Percentage \(LSLG\) uses the same formula as Slugging Percentage \(SLG\), but it uses the number of singles, doubles, triples, home runs, and at bats each player has over their entire career, rather than just over a single season.
 
+> 依据Part i的输出，找到生涯最佳击球率（即多个年份相加）的运动员的`playerid`, `namefirst`, `namelast` 和`lslg`，LSLG和SLG的计算公式相同，但是它使用了运动员整个职业生涯全部的数据，而不仅仅是某年的一个赛季
+
 Note that the database only gives batting information broken down by year; you will need to convert to total information across all time \(from the earliest date recorded up to the last date recorded\) to compute `lslg`. Order the results by `lslg` \(descending\) and break ties by `playerid` \(ascending\)
 
 * Note: Make sure that you only include players with more than 50 at-bats across their lifetime.
 
+>请注意，数据库仅提供按年份细分的击球信息；您将需要转换为所有时间的总信息（从最早记录的日期到最后记录的日期）来计算`lslg`。按`lslg`（降序）对结果进行排序，并按`playerid`（升序）打破平局
+>
+>- 注意：确保您只包含一生中击球次数超过 50 次的球员。
+
 **iii.** Find the `namefirst`, `namelast` and Lifetime Slugging Percentage \(`lslg`\) of batters whose lifetime slugging percentage is higher than that of San Francisco favorite Willie Mays.
+
+> 查找 `namefirst`, `namelast`和`lslg`的击球手，他的`lslg`应该高于旧金山最受欢迎的威利·梅斯
 
 You may include Willie Mays' `playerid` in your query \(`mayswi01`\), but you _may not_ include his slugging percentage -- you should calculate that as part of the query. \(Test your query by replacing `mayswi01` with the playerid of another player -- it should work for that player as well! We may do the same in the autograder.\)
 
 * Note: Make sure that you still only include players with more than 50 at-bats across their lifetime.
+
+>您可以在查询中包含 Willie Mays 的`playerid`（`mayswi01`），但您可能不包含他的长打百分比——您应该将其计算为查询的一部分。 （通过将 `mayswi01` 替换为另一个玩家的玩家 ID 来测试您的查询 - 它也应该适用于该玩家！我们可以在自动评分器中执行相同的操作。）
+>
+>* 注意：确保您仍然只包含一生中击球次数超过 50 次的球员。
 
 _Just for fun_: For those of you who are baseball buffs, variants of the above queries can be used to find other more detailed SaberMetrics, like [Runs Created](https://en.wikipedia.org/wiki/Runs_created) or [Value Over Replacement Player](https://en.wikipedia.org/wiki/Value_over_replacement_player). Wikipedia has a nice page on [baseball statistics](https://en.wikipedia.org/wiki/Baseball_statistics); most of these can be computed fairly directly in SQL.
 
@@ -252,23 +264,43 @@ _Also just for fun_: SF Giants VP of Baseball Operations, [Yeshayah Goldfarb](ht
 
 \(Please do not include your "just for fun" answers in your solution file! They will break the autograder.\)
 
+>_也只是为了好玩_：SF Giants 棒球运营副总裁 [Yeshayah Goldfarb](https://www.mlb.com/giants/team/front-office/yeshayah-goldfarb) 建议如下：
+>
+>> 以拉赫曼数据库为指导，MLB“类固醇时代”何时开始和结束进行争论。使用数据探索这个问题有多种不同的方法。
+>
+>（请不要在解决方案文件中包含“只是为了好玩”的答案！它们会破坏自动评分器。）
+
 ### Task 4: **Salaries**
 
 **i.** Find the `yearid`, min, max and average of all player salaries for each year recorded, ordered by `yearid` in _ascending_ order.
 
+> 查找`yearid`, 最小，最大以及平均工资，对于每一年有的记录，按年份升序
+
 **ii.** For salaries in 2016, compute a [histogram](https://en.wikipedia.org/wiki/Histogram). Divide the salary range into 10 equal bins from min to max, with `binid`s 0 through 9, and count the salaries in each bin. Return the `binid`, `low` and `high` boundaries for each bin, as well as the number of salaries in each bin, with results sorted from smallest bin to largest.
+
+> 对于2016年的薪资，计算一个[直方图](https://en.wikipedia.org/wiki/Histogram)。把薪资等级划分为10个从最低到最高的相等区间，`binid`为0到9，并返回每个区间的`binid`,`low`,`high`边界，以及每个区间内的工资数量，结果按小区间到大区间排序
 
 * Note: `binid` 0 corresponds to the lowest salaries, and `binid` 9 corresponds to the highest. The ranges are left-inclusive \(i.e. `[low, high)`\) -- so the `high` value is excluded. For example, if bin 2 has a `high` value of 100000, salaries of 100000 belong in bin 3, and bin 3 should have a `low` value of 100000.
 * Note: The `high` value for bin 9 may be inclusive\).
 * Note: The test for this question is broken into two parts. Use `python3 test.py -q 4ii_bins_0_to_8` and `python3 test.py -q 4ii_bin_9` to run the tests
 * Hidden testing advice: we will be testing the case where a bin has zero player salaries in it. The correct behavior in this case is to display the correct `binid`, `low` and `high` with a `count` of zero, NOT just excluding the bin altogether.
 
+>- 注：`binid` 0对应最低工资，9对应最高工资。区间是左闭右开的 \(例. `[low, high)`\)，所以`high`值被排除在外。例如，如果区间2的最大值是100000，那么薪资100000属于区间3，区间3的`low`是100000.
+>- 注：区间9的`high`可能包含在内
+>- 注：本题的测试分为两部分
+>- 隐藏的测试检验：我们将测试区间中玩家工资为零的情况。在这种情况下，正确的行为是显示正确的`binid`、`low`和`high`，`count`为零，而不是完全排除 bin。
+
 Some useful information:
 
 * You may find it helpful to use the provided helper table containing all the possible `binid`s. We'll only be testing with these possible binid's \(there aren't any hidden tests using say, 100 bins\) so using the hardcoded table is fine
 * If you want to take the [floor ](https://en.wikipedia.org/wiki/Floor_and_ceiling_functions)of a positive float value you can do `CAST (some_value AS INT)`
 
+>* 您可能会发现使用提供的包含所有可能的`binid`的帮助表很有帮助。我们只会使用这些可能的 `binid` 进行测试（没有任何使用 100 个 bin 进行的隐藏测试），因此使用硬编码表就可以了
+>* 如果你想获取正浮点值的 [地板值](https://en.wikipedia.org/wiki/Floor_and_ceiling_functions)，你可以执行 `CAST (some_value AS INT)`
+
 **iii.** Now let's compute the Year-over-Year change in min, max and average player salary. For each year with recorded salaries after the first, return the `yearid`, `mindiff`, `maxdiff`, and `avgdiff` with respect to the previous year. Order the output by `yearid` in _ascending_ order. \(You should omit the very first year of recorded salaries from the result.\)
+
+> 现在让我们来计算每年薪资最小，最大和平均值的变化情况。对于每一年记录的薪资（除了第一年），返回`yearid`, `mindiff`, `maxdiff`, 和 `avgdiff`（和前一年相比较），按`yearid`升序排序（你需要在结果中忽略第一年）
 
 **iv.** In 2001, the max salary went up by over $6 million. Write a query to find the players that had the max salary in 2000 and 2001. Return the `playerid`, `namefirst`, `namelast`, `salary` and `yearid` for those two years. If multiple players tied for the max salary in a year, return all of them.
 

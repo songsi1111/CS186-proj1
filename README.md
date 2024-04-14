@@ -48,6 +48,7 @@ git config --global --unset https.proxy
 
 ```bash
 git init
+git status "查看状态"
 ```
 
 这样就会在文件夹下新建一个`.git`文件,这个文件夹现在就是你的本地仓库
@@ -72,7 +73,19 @@ git remote add origin <url>
 
 ###### 远程仓库的使用
 
-参考：[Git - 远程仓库的使用 (git-scm.com)](https://git-scm.com/book/zh/v2/Git-基础-远程仓库的使用)
+参考：[Git - 远程仓库的使用 ](https://git-scm.com/book/zh/v2/Git-基础-远程仓库的使用)
+
+[Git基本使用教程（二）：获取更新与推送更新_获取数据库的更新:CSDN博客](https://blog.csdn.net/qq_35206244/article/details/97772285)
+
+```bash
+git diff //查看工作区与暂存区的不同
+git add .
+git diff --cached //查看暂存区与远程仓库的不同
+git commit -m "提交注释"
+git push --set-upstrem origin main //这会创建一个main分支
+```
+
+
 
 #### SQLite
 
@@ -282,7 +295,84 @@ diffs/q3i.txt: line 1: syntax error near unexpected token `slg,'
 diffs/q3i.txt: line 1: `  playerid|namefirst|namelast|yearid|ROUND(slg, 4)'
 ```
 
+#### 3iii
 
+挑选名字是`Willie Mays`的球员，如果有多个同名球员，这个查询也能自动找到最大的`lslg`
 
+```sql
+WITH willie_mays(lslg) AS 
+  (SELECT ROUND((CAST(sum(h) AS FLOAT) + 1.0 * CAST(sum(h2b) AS FLOAT) + 2.0 * CAST(sum(h3b) AS FLOAT) + 3.0 * CAST(sum(hr) AS FLOAT)) / CAST(sum(ab) AS FLOAT),4)
+ FROM people p INNER JOIN batting b ON p.playerid=b.playerid
+ WHERE p.playerid LIKE 'mayswi01'
+ GROUP BY p.playerid)
 
+  SELECT lslg
+ FROM willie_mays
+;
+```
 
+> 注：威利的lslg是0.5575
+
+#### 4i
+
+```sql
+-- 球员薪资表
+CREATE TABLE IF NOT EXISTS "salaries" (
+        "ID" INTEGER NOT NULL,
+        "yearID" SMALLINT NOT NULL,
+        "teamID" CHARACTER(3) NOT NULL,
+        "team_ID" INTEGER NULL,
+        "lgID" CHARACTER(2) NOT NULL,
+        "playerID" VARCHAR(9) NOT NULL,
+        "salary" DOUBLE NULL,
+        PRIMARY KEY ("ID"),
+        FOREIGN KEY("lgID") REFERENCES "leagues" ("lgID") ON UPDATE NO ACTION ON DELETE NO ACTION,
+        FOREIGN KEY("team_ID") REFERENCES "teams" ("ID") ON UPDATE NO ACTION ON DELETE NO ACTION,
+        FOREIGN KEY("playerID") REFERENCES "people" ("playerID") ON UPDATE NO ACTION ON DELETE NO ACTION
+);
+CREATE INDEX "salaries_lgID" ON "salaries" ("lgID");
+CREATE INDEX "salaries_playerID" ON "salaries" ("playerID");
+CREATE INDEX "salaries_team_ID" ON "salaries" ("team_ID");
+CREATE UNIQUE INDEX "salaries_yearID" ON "salaries" ("yearID", "teamID", "lgID", "playerID");
+```
+
+#### 4ii
+
+查找2016年的最高薪资以及最低薪资
+
+```sql
+  SELECT MAX(salary),MIN(salary)
+ FROM salaries
+ WHERE yearid=2016
+ GROUP BY yearid
+;
+```
+
+33000000.0|507500.0
+
+```sql
+  SELECT num AS first, num * 2 AS second
+ FROM
+  (SELECT 0 AS num UNION ALL
+   SELECT 1 AS num UNION ALL
+   SELECT 2 AS num UNION ALL
+   SELECT 3 AS num UNION ALL
+   SELECT 4 AS num UNION ALL
+   SELECT 5 AS num UNION ALL
+   SELECT 6 AS num UNION ALL
+   SELECT 7 AS num UNION ALL
+   SELECT 8 AS num UNION ALL
+   SELECT 9 AS num);
+```
+
+查询所有的年薪情况如何
+
+```sql
+SELECT * from salaries where yearid=2016 order by salary desc;
+```
+
+> 注意：binid=9的情况需要单独判断，因为它是左闭右也闭的
+
+#### 吐槽
+
+坚持大写每个SQL的关键字是一种信仰
